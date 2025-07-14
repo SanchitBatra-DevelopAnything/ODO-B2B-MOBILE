@@ -12,8 +12,11 @@ class _OrderPlacedState extends State<OrderPlaced> {
   @override
   void initState() {
     // TODO: implement initState
-    final player = AudioCache();
-    // player.play('orderDone.mp3');
+    final player = AudioPlayer();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await player.setSource(AssetSource('orderDone.mp3'));
+      await player.resume();
+    });
     super.initState();
   }
 
