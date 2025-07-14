@@ -46,6 +46,8 @@ dependencies:
   intl : ^0.18.1
   geolocator: ^14.0.1
   awesome_snackbar_content:
+  new_version_plus: ^0.0.2
+  store_redirect: ^2.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import 'package:odo_mobile_v2/providers/auth.dart';
 import 'package:odo_mobile_v2/providers/cart.dart';
 import 'package:odo_mobile_v2/providers/banner.dart';
 import 'package:odo_mobile_v2/providers/categories_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:store_redirect/store_redirect.dart';
+
 
 import 'PlatformDialog.dart';
 import 'cartBadge.dart';
@@ -85,6 +88,8 @@ Future<void> _initializeData() async {
       });
     }
 
+    _checkForAppUpdate();
+
     print("FETCH COMPLETE!");
   } catch (error) {
     print("Error during initialization: $error");
@@ -98,6 +103,64 @@ Future<void> _initializeData() async {
     // TODO: implement dispose
     super.dispose();
   }
+
+
+  void _checkForAppUpdate() async {
+  final newVersion = NewVersionPlus(
+    androidId: 'com.production.ODO',
+  );
+
+  try {
+    final status = await newVersion.getVersionStatus();
+
+    if (status != null) {
+      final localVersion = status.localVersion;
+      final storeVersion = status.storeVersion;
+
+      if (localVersion != storeVersion) {
+        _showUpdateDialog(storeVersion);
+      }
+    }
+  } catch (e) {
+    print('Update check failed: $e');
+  }
+}
+
+  void _showUpdateDialog(String latestVersion) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => AlertDialog(
+      title: const Text('Update Available'),
+      content: Text(
+        'A new version ($latestVersion) is available on the Play Store. Please update for the best experience.',
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Later'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () {
+            StoreRedirect.redirect(androidAppId: 'com.production.ODO');
+            Navigator.pop(context);
+          },
+          child: const Text('Update'),
+        ),
+      ],
+    ),
+  );
+}
+
+
 
   bool decideOnCoke()
   {
