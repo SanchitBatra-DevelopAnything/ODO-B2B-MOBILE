@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "687289513529",
+    "firebase_url": "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "odo-admin-app",
+    "storage_bucket": "odo-admin-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687289513529:android:7522e5f483232453f8bfe8",
+        "android_client_info": {
+          "package_name": "com.production.ODO"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUp1deGjBJ4cnXzjU7BPbFs40bEXJv5SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
