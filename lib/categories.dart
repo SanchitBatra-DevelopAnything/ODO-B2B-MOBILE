@@ -92,6 +92,10 @@ Future<void> _initializeData() async {
 
     print("FETCH COMPLETE!");
   } catch (error) {
+    setState(() {
+      _isLoading = false;
+    });
+    showErrorDialog(error.toString());
     print("Error during initialization: $error");
   }
 }
@@ -124,6 +128,29 @@ Future<void> _initializeData() async {
   } catch (e) {
     print('Update check failed: $e');
   }
+}
+
+void showErrorDialog(String error) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => AlertDialog(
+      title: const Text('Error on initialization'),
+      content: Text(
+        error
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
 }
 
   void _showUpdateDialog(String latestVersion) {
