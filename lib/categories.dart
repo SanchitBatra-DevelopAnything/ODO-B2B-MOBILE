@@ -39,9 +39,6 @@ void didChangeDependencies() {
 
 Future<void> _initializeData() async {
   try {
-    await Provider.of<AuthProvider>(context, listen: false).setupNotifications();
-    if (!mounted) return;
-
     await doAuthStuff();
     if (!mounted) return;
 

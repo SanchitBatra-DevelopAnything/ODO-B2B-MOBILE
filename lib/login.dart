@@ -75,7 +75,11 @@ class _LoginPageState extends State<LoginPage> {
         Provider.of<AuthProvider>(context, listen: false)
             .setLoggedInDistributorAndArea(distributorKey);
 
-        Navigator.of(context).pushReplacementNamed('/categories');
+        Navigator.of(context).pushNamedAndRemoveUntil(
+  '/categories',
+  (Route<dynamic> route) => false,
+);
+
       } else {
         if (mounted) {
           setState(() {
