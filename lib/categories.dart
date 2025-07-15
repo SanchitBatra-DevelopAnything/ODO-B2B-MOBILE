@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:odo_mobile_v2/providers/auth.dart';
@@ -238,11 +239,47 @@ void showErrorDialog(String error) {
     var categoriesData = Provider.of<CategoriesProvider>(context).categories;
     var loggedInDistributor =
         Provider.of<AuthProvider>(context).loggedInDistributor;
-    return SafeArea(
+    
+   return PopScope(
+  canPop: false,
+  onPopInvoked: (didPop) async {
+    if (!didPop) {
+      final shouldExit = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Exit App"),
+          content: const Text("Do you want to exit the app?"),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white, // For text and icon color
+        ),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white, // For text and icon color
+        ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldExit == true) {
+        SystemNavigator.pop(); // Exit the app
+      }
+    }
+  },
+    child : SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Column(
-          children: <Widget>[
+          children: <Widget>[ 
             Container(
               padding: const EdgeInsets.all(10.0),
               color: Colors.black,
@@ -446,6 +483,6 @@ void showErrorDialog(String error) {
           ],
         ),
       ),
-    );
+    ));
   }
 }
