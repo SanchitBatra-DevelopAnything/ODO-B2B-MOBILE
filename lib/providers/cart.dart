@@ -364,7 +364,7 @@ class CartProvider with ChangeNotifier {
           cartItem['quantity'],
           cartItem['title'],
           cartItem['imageUrl'],
-          cartItem['parentCategoryType'],
+          cartItem['parentCategoryType']??"will-be-added",
           cartItem['parentBrandName'],
           cartItem['slab_1_start'],
           cartItem['slab_1_end'],
