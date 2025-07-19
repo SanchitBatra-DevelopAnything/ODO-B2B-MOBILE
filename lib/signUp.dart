@@ -79,6 +79,7 @@ class _SignUpFormState extends State<SignUpForm> {
           isSigningUp = true;
         });
 
+    try{
     await Provider.of<AuthProvider>(context, listen: false).distributorSignUp(
         usernameController.text.trim().toString().toUpperCase(),
         selectedArea.toString().trim().toUpperCase(),
@@ -92,8 +93,19 @@ class _SignUpFormState extends State<SignUpForm> {
     setState(() {
       // showAlertDialog(context);
       isSigningUp = false;
-      Navigator.pushReplacementNamed(context , '/afterSignUp');
+      
     });
+    Navigator.pushReplacementNamed(context , '/afterSignUp');
+    }
+    catch(e)
+    {
+      setState(() {
+        isSigningUp = false;
+      });
+      showSnackBar(context, "Error signing up. Please try again.");
+    }
+    
+    
   }
 
     

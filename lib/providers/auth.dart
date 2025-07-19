@@ -56,7 +56,7 @@ class AuthProvider with ChangeNotifier {
   setupNotifications() async {
     FirebaseMessaging fcm = FirebaseMessaging.instance;
     await fcm.requestPermission();
-    _deviceToken = await fcm.getToken();
+  _deviceToken = await fcm.getToken();
     notifyListeners();
   }
 
@@ -64,8 +64,12 @@ class AuthProvider with ChangeNotifier {
       String GSTNumber, String shop,String contactNumber,String shopAddress , String latitude , String longitude) async {
     //send http post here.
     const url =
-        "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/DistributorNotifications.json";
-    await http.post(Uri.parse(url),
+        "http://10.0.2.2:8080/v1/members/notifications";
+   final response =await http.post(Uri.parse(url),
+        headers : {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: json.encode({
           'name': distributorName,
           'area': area,
