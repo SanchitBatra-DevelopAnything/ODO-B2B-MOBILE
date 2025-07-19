@@ -48,10 +48,13 @@ Future<void> _initializeData() async {
     if (!mounted) return;
 
     var distributor = Provider.of<AuthProvider>(context, listen: false).loggedInDistributor;
+     var member = distributor;
     var area = Provider.of<AuthProvider>(context, listen: false).loggedInArea;
+     var memberKey = Provider.of<AuthProvider>(context, listen: false)
+        .activeDistributorKey;
 
     await Provider.of<CartProvider>(context, listen: false)
-        .fetchCartFromDB(distributor, area);
+        .fetchCartFromDB(member, memberKey);
     if (!mounted) return;
 
     await Provider.of<BannerProvider>(context, listen: false).fetchBannersFromDB();
