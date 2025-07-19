@@ -44,7 +44,7 @@ Future<void> _initializeData() async {
     if (!mounted) return;
 
     await Provider.of<CategoriesProvider>(context, listen: false)
-        .fetchCategoriesFromDB(isBulandshehar: decideOnCoke());
+        .fetchBrandsFromDB(isBulandshehar: decideOnCoke());
     if (!mounted) return;
 
     var distributor = Provider.of<AuthProvider>(context, listen: false).loggedInDistributor;
@@ -236,7 +236,7 @@ void showErrorDialog(String error) {
 
   @override
   Widget build(BuildContext context) {
-    var categoriesData = Provider.of<CategoriesProvider>(context).categories;
+    var brandsData = Provider.of<CategoriesProvider>(context).brands;
     var loggedInDistributor =
         Provider.of<AuthProvider>(context).loggedInDistributor;
     
@@ -396,14 +396,14 @@ void showErrorDialog(String error) {
                       )
                     : GridView.builder(
                         padding: const EdgeInsets.all(20.0),
-                        itemCount: categoriesData.length,
+                        itemCount: brandsData.length,
                         itemBuilder: (ctx, i) => Stack(
                           alignment: AlignmentDirectional.bottomStart,
                           children: [
                             GestureDetector(
                               onTap: () {
-                                moveToItems(categoriesData[i].id,
-                                    categoriesData[i].categoryName);
+                                 moveToItems(brandsData[i].id,
+                                    brandsData[i].brandName);
                               },
                               child: SizedBox(
                                 height: 400,
@@ -420,7 +420,7 @@ void showErrorDialog(String error) {
                                       SizedBox(
                                         width: double.infinity,
                                         child: CachedNetworkImage(
-                                          imageUrl: categoriesData[i].imageUrl,
+                                          imageUrl: brandsData[i].imageUrl,
                                           fit: BoxFit.fitWidth,
                                           progressIndicatorBuilder: (context,
                                                   url, downloadProgress) =>
@@ -443,8 +443,8 @@ void showErrorDialog(String error) {
                                             child: Align(
                                               alignment: Alignment.center,
                                               child: Text(
-                                                categoriesData[i]
-                                                    .categoryName
+                                                 brandsData[i]
+                                                    .brandName
                                                     .toUpperCase(),
                                                 style: const TextStyle(
                                                   color: Colors.white,
