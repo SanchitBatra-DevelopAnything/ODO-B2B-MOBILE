@@ -31,7 +31,7 @@ class _ItemsState extends State<Items> {
         _isLoading = true;
       });
       Provider.of<CategoriesProvider>(context, listen: false)
-          .loadItemsForActiveCategory()
+          .loadItemsForActiveBrand()
           .then((_) {
         setState(() {
           _isLoading = false;

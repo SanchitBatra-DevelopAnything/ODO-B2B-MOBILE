@@ -72,13 +72,13 @@ class CategoriesProvider with ChangeNotifier {
       _brands = loadedBrands;
       notifyListeners();
     } catch (error) {
-      print("CATEGORIES FETCH FAILED!");
+      print("BRANDS FETCH FAILED!");
       rethrow;
     }
   }
 
-  Future<void> loadItemsForActiveCategory() async {
-  final url = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/Categories/$activeCategoryKey/items.json";
+  Future<void> loadItemsForActiveBrand() async {
+  var url = "http://10.0.2.2:8080/v1/items/brand/"+activeBrandKey;
   try {
     final response = await http.get(Uri.parse(url));
     final List<Item> loadedItems = [];

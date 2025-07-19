@@ -208,11 +208,11 @@ void showErrorDialog(String error) {
     Navigator.of(context).pushNamed("/cart");
   }
 
-  moveToItems(String categoryId, String categoryName) {
-    Provider.of<CategoriesProvider>(context, listen: false).activeCategoryKey =
-        categoryId;
-    Provider.of<CategoriesProvider>(context, listen: false).activeCategoryName =
-        categoryName;
+  moveToItems(String brandId, String brandName) {
+    Provider.of<CategoriesProvider>(context, listen: false).activeBrandKey =
+        brandId;
+    Provider.of<CategoriesProvider>(context, listen: false).activeBrandName =
+        brandName;
 
     Navigator.of(context).pushNamed('/items');
   }
