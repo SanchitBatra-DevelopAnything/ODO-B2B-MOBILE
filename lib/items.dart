@@ -35,6 +35,14 @@ class _ItemsState extends State<Items> {
           .then((_) {
         setState(() {
           _isLoading = false;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Click on item image for details.' , style: TextStyle(fontSize: 15),),
+          duration: Duration(seconds: 10),
+        ),
+      );
+    });
         });
       });
       _isFirstTime = false;
