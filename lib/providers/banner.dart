@@ -23,7 +23,7 @@ class BannerProvider with ChangeNotifier {
 
   Future<void> fetchBannersFromDB() async {
     const url =
-        "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/B2BBanners.json";
+        "http://10.0.2.2:8080/v1/B2BBanners";
     try {
       final response = await http.get(Uri.parse(url));
       final List<BannerModel> loadedBanners = [];
