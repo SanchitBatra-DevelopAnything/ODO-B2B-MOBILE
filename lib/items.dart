@@ -177,7 +177,7 @@ class _ItemsState extends State<Items> {
                               price: getPrice(item, loggedInArea),
                               itemId: item.id,
                               itemName: item.itemName,
-                              itemDetails: item.details,
+                              itemDetails: item.itemDetails,
                               slab_1_start: slabData['slab_1_start'] ?? 1000,
                               slab_1_end: slabData['slab_1_end'] ?? 1000,
                               slab_2_start: slabData['slab_2_start'] ?? 1000,

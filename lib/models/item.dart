@@ -18,6 +18,7 @@ class Item {
   dynamic slab_1_discount;
   dynamic slab_2_discount;
   dynamic slab_3_discount;
+  String itemDetails;
   Map<String, dynamic> areaSlabs; // ✅ New field
 
   Item({
@@ -41,6 +42,7 @@ class Item {
     this.slab_2_discount,
     this.slab_3_discount,
     required this.areaSlabs,
+    required this.itemDetails,
   });
 
   factory Item.fromJson(String id, Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class Item {
       slab_2_discount: json['slab_2_discount'],
       slab_3_discount: json['slab_3_discount'],
       areaSlabs: Map<String, dynamic>.from(json['areaSlabs'] ?? {}),
+      itemDetails: json['itemDetails'] ?? '',
     );
   }
 
