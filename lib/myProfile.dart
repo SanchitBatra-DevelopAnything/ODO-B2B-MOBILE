@@ -186,6 +186,25 @@ class _MyProfileState extends State<MyProfile> {
                     height: 10,
                   ),
                   ListTile(
+                      onTap: () => {},
+                      leading: const Icon(
+                        Icons.phone_android_outlined,
+                        size: 28,
+                        color: Color(0XFFDD0E1C),
+                      ),
+                      tileColor: Colors.white,
+                      subtitle: const Text("For any assistance , feel free to call us."),
+                      title: const Text(
+                        "+91-8076051986",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )),
+                      const SizedBox(
+                    height: 10,
+                  ),
+                  ListTile(
                       onTap: () => {showLogoutBox(context)},
                       leading: const Icon(
                         Icons.logout_outlined,
