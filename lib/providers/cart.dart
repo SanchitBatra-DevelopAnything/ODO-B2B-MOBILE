@@ -285,9 +285,10 @@ class CartProvider with ChangeNotifier {
     var day = todaysDate.day.toString();
     var date = "$day-$month-$year";
     var url =
-        "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/activeDistributorOrders.json";
+        "http://10.0.2.2:8080/v1/orders";
     try {
       await http.post(Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
           body: json.encode({
             "area": area,
             "shop" : shop,
