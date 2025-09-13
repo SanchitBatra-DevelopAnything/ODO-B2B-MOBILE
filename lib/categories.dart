@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:new_version_plus/new_version_plus.dart';
+import 'package:odo_mobile_v2/models/bannerModel.dart';
 import 'package:odo_mobile_v2/providers/auth.dart';
 import 'package:odo_mobile_v2/providers/cart.dart';
 import 'package:odo_mobile_v2/providers/banner.dart';
@@ -40,62 +41,98 @@ void didChangeDependencies() {
 
 Future<void> _initializeData() async {
   try {
-    await doAuthStuff();
+    final stopwatch = Stopwatch()..start();
+
+    // Perform initial authentication first to set up distributor and area
+    await _performInitialAuth();
+
+    // Fetch categories and cart sequentially after distributor and area are set
+    await Future.wait([
+      _fetchCategories(),
+      _fetchCart(),
+    ]);
+
+    print("Time taken for critical initialization tasks: ${stopwatch.elapsedMilliseconds} ms");
+
     if (!mounted) return;
 
-    await Provider.of<CategoriesProvider>(context, listen: false)
-        .fetchCategoriesFromDB(isBulandshehar: decideOnCoke());
-    if (!mounted) return;
+    // Update the loading state to display the fetched categories and cart
+    _setLoadingState(false);
 
-    var distributor = Provider.of<AuthProvider>(context, listen: false).loggedInDistributor;
-    var area = Provider.of<AuthProvider>(context, listen: false).loggedInArea;
+    // Offload banner fetching and preloading to run in the background
+    _fetchAndPreloadBanners();
 
-    await Provider.of<CartProvider>(context, listen: false)
-        .fetchCartFromDB(distributor, area);
-    if (!mounted) return;
-
-    await Provider.of<BannerProvider>(context, listen: false).fetchBannersFromDB();
-    if (!mounted) return;
-
-    var bannerList = Provider.of<BannerProvider>(context, listen: false).banners;
-
-    if (bannerList.isNotEmpty) {
-      // Preload all banner images
-      await Future.wait(bannerList.map((banner) async {
-        await precacheImage(NetworkImage(banner.imageUrl), context);
-      }));
-
-      // After preload, show overlay banners
-      Navigator.of(context).push(
-        PageRouteBuilder(
-          opaque: false,
-          barrierDismissible: false,
-          pageBuilder: (_, __, ___) => BannerOverlay(
-            bannerList: bannerList,
-            onComplete: () {
-              setState(() {
-                _isLoading = false;
-              });
-            },
-          ),
-        ),
-      );
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-
+    stopwatch.reset();
     _checkForAppUpdate();
+    print("Time taken for _checkForAppUpdate: ${stopwatch.elapsedMilliseconds} ms");
 
     print("FETCH COMPLETE!");
   } catch (error) {
-    setState(() {
-      _isLoading = false;
-    });
-    showErrorDialog(error.toString());
-    print("Error during initialization: $error");
+    _handleInitializationError(error);
   }
+}
+
+Future<void> _performInitialAuth() async {
+  await doAuthStuff();
+}
+
+Future<void> _fetchCategories() async {
+  final isBulandshehar = decideOnCoke();
+  await Provider.of<CategoriesProvider>(context, listen: false)
+      .fetchCategoriesFromDB(isBulandshehar: isBulandshehar);
+}
+
+Future<void> _fetchCart() async {
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  final distributor = authProvider.loggedInDistributor;
+  final area = authProvider.loggedInArea;
+  print("Fetching cart for distributor: $distributor, area: $area");
+  await Provider.of<CartProvider>(context, listen: false)
+      .fetchCartFromDB(distributor, area);
+}
+
+Future<void> _fetchAndPreloadBanners() async {
+  final bannerProvider = Provider.of<BannerProvider>(context, listen: false);
+  await bannerProvider.fetchBannersFromDB();
+
+  final bannerList = bannerProvider.banners;
+  if (bannerList.isNotEmpty) {
+    await _preloadBannerImages(bannerList);
+    _showBannerOverlay(bannerList);
+  } else {
+    _setLoadingState(false);
+  }
+}
+
+Future<void> _preloadBannerImages(List<BannerModel> bannerList) async {
+  await Future.wait(bannerList.map((banner) async {
+    await precacheImage(NetworkImage(banner.imageUrl), context);
+  }));
+}
+
+void _showBannerOverlay(List<BannerModel> bannerList) {
+  Navigator.of(context).push(
+    PageRouteBuilder(
+      opaque: false,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) => BannerOverlay(
+        bannerList: bannerList,
+        onComplete: () => _setLoadingState(false),
+      ),
+    ),
+  );
+}
+
+void _setLoadingState(bool isLoading) {
+  setState(() {
+    _isLoading = isLoading;
+  });
+}
+
+void _handleInitializationError(Object error) {
+  _setLoadingState(false);
+  showErrorDialog(error.toString());
+  print("Error during initialization: $error");
 }
 
 
