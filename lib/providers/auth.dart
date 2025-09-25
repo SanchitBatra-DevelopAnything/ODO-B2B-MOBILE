@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:odo_mobile_v2/models/area.dart';
 import 'package:odo_mobile_v2/models/distributor.dart';
+import 'package:odo_mobile_v2/models/referrer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   List<Area> _areas = [];
+  List<Referrer> _referrers = [];
   List<Distributor> _distributors = [];
 
   String loggedInDistributor = "";
@@ -38,6 +40,10 @@ class AuthProvider with ChangeNotifier {
     return [..._areas].map((e) => e.areaName).toList();
   }
 
+  List<String> get referrerNames =>
+    _referrers.map((e) => e.referrerName).toList()..sort();
+
+
   List<Distributor> get distributors {
     return [..._distributors];
   }
@@ -61,7 +67,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> distributorSignUp(String distributorName, String area,
-      String GSTNumber, String shop,String contactNumber,String shopAddress , String latitude , String longitude) async {
+      String GSTNumber, String shop,String contactNumber,String shopAddress , String latitude , String longitude , String referrer) async {
     //send http post here.
     const url =
         "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/DistributorNotifications.json";
@@ -75,7 +81,8 @@ class AuthProvider with ChangeNotifier {
           'deviceToken': _deviceToken,
           'shopAddress' : shopAddress,
           'latitude' : latitude,
-          'longitude' : longitude
+          'longitude' : longitude,
+          'referrer': referrer == "" ? "not-mentioned" : referrer,
         }));
   }
 
@@ -92,6 +99,22 @@ class AuthProvider with ChangeNotifier {
       _areas.sort(
         (a, b) => a.areaName.compareTo(b.areaName),
       );
+      notifyListeners();
+    } catch (error) {
+      rethrow; //will pass upward.
+    }
+  }
+
+  Future<void> fetchReferrersFromDB() async {
+    const url = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/ReferralLeaderboard.json";
+    try {
+      final response = await http.get(Uri.parse(url));
+      final List<Referrer> loadedReferrers = [];
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      extractedData.forEach((referrerId, referrerData) {
+        loadedReferrers.add(Referrer(referrerName: referrerData['referrerName']));
+      });
+      _referrers = loadedReferrers;
       notifyListeners();
     } catch (error) {
       rethrow;

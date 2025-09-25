@@ -52,8 +52,6 @@ Future<void> _initializeData() async {
       _fetchCart(),
     ]);
 
-    print("Time taken for critical initialization tasks: ${stopwatch.elapsedMilliseconds} ms");
-
     if (!mounted) return;
 
     // Update the loading state to display the fetched categories and cart
@@ -64,7 +62,6 @@ Future<void> _initializeData() async {
 
     stopwatch.reset();
     _checkForAppUpdate();
-    print("Time taken for _checkForAppUpdate: ${stopwatch.elapsedMilliseconds} ms");
 
     print("FETCH COMPLETE!");
   } catch (error) {

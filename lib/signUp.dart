@@ -23,8 +23,10 @@ class _SignUpFormState extends State<SignUpForm> {
   TextEditingController GSTController = TextEditingController();
   TextEditingController contactController = TextEditingController();
   TextEditingController shopAddressController = TextEditingController();
+  TextEditingController referrerController = TextEditingController();
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   String? selectedArea;
+  String? selectedReferrer;
   bool _isFirstTime = true;
   bool isSigningUp = false;
 
@@ -87,7 +89,9 @@ class _SignUpFormState extends State<SignUpForm> {
         contactController.text.trim(),
         shopAddressController.text.trim(),
         position.latitude.toString(),
-        position.longitude.toString());
+        position.longitude.toString(),
+        selectedReferrer.toString().trim().toUpperCase()
+        );
 
     setState(() {
       // showAlertDialog(context);
@@ -162,6 +166,7 @@ class _SignUpFormState extends State<SignUpForm> {
     // TODO: implement didChangeDependencies
     if (_isFirstTime) {
       Provider.of<AuthProvider>(context, listen: false).fetchAreasFromDB();
+      Provider.of<AuthProvider>(context , listen:false).fetchReferrersFromDB();
       Provider.of<AuthProvider>(context, listen: false).setupNotifications();
     }
     _isFirstTime = false; //never run the above if again.
@@ -180,6 +185,7 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     final areas = Provider.of<AuthProvider>(context).areaNames;
+    final referrers = Provider.of<AuthProvider>(context).referrerNames;
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0XFFf5f5f5),
@@ -285,6 +291,33 @@ class _SignUpFormState extends State<SignUpForm> {
                               }),
                     ),
                     const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      width: MediaQuery.of(context).size.width,
+                      child: DropdownButton<String>(
+                          items: referrers.map(buildMenuItem).toList(),
+                          isExpanded: true,
+                          focusColor: const Color(0xffe6e3d3),
+                          hint: const Text(
+                            "Who Referred You?",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          dropdownColor: const Color(0XFFf5f5f5),
+                          iconSize: 36,
+                          icon: const Icon(Icons.arrow_drop_down,
+                              color: Colors.black),
+                          value: selectedReferrer,
+                          style: const TextStyle(color: Colors.black),
+                          onChanged: (value) => {
+                                setState(
+                                  () => selectedReferrer = value,
+                                )
+                              }),
+                    ),
+                    const SizedBox(
                       height: 20,
                     ),
                     Row(
@@ -365,5 +398,5 @@ DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
     child: Text(item,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 15,
+        fontSize: 15,
         )));
