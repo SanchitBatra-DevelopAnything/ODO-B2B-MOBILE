@@ -19,6 +19,7 @@ class Item {
   dynamic slab_2_discount;
   dynamic slab_3_discount;
   String itemDetails;
+  bool inStock;
   Map<String, dynamic> areaSlabs; // ✅ New field
 
   Item({
@@ -29,6 +30,7 @@ class Item {
     this.modern_trade_price = 10,
     this.out_station_price = 10,
     this.super_stockist_price = 10,
+    this.inStock = true,
     this.details = "",
     this.western_price = 10,
     required this.itemPrice,
@@ -55,6 +57,7 @@ class Item {
       modern_trade_price: json['modern_trade_price'],
       out_station_price: json['out_station_price'],
       super_stockist_price: json['super_stockist_price'],
+      inStock: json['inStock'] ?? true,
       western_price: json['western_price'],
       details: json['details'] ?? '',
       slab_1_start: json['slab_1_start'],

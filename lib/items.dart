@@ -179,7 +179,7 @@ class _ItemsState extends State<Items> {
                           itemBuilder: (context, index) {
                             final item = items[index];
                             final slabData = item.getEffectiveSlab(loggedInArea);
-                            final soldOut = true;
+                            final soldOut = !items[index].inStock;
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Stack(
