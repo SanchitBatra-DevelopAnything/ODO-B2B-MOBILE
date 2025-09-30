@@ -179,22 +179,71 @@ class _ItemsState extends State<Items> {
                           itemBuilder: (context, index) {
                             final item = items[index];
                             final slabData = item.getEffectiveSlab(loggedInArea);
+                            final soldOut = true;
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Stack(
+      children: [
+        // Base item card
+        AbsorbPointer(
+          absorbing: soldOut,
+          child: ItemCard(
+            imgPath: item.imgUrl,
+            price: getPrice(item, loggedInArea),
+            itemId: item.id,
+            itemName: item.itemName,
+            itemDetails: item.itemDetails,
+            slab_1_start: slabData['slab_1_start'] ?? 1000,
+            slab_1_end: slabData['slab_1_end'] ?? 1000,
+            slab_2_start: slabData['slab_2_start'] ?? 1000,
+            slab_2_end: slabData['slab_2_end'] ?? 1000,
+            slab_3_start: slabData['slab_3_start'] ?? 1000,
+            slab_3_end: slabData['slab_3_end'] ?? 1000,
+            slab_1_discount: slabData['slab_1_discount'] ?? 0,
+            slab_2_discount: slabData['slab_2_discount'] ?? 0,
+            slab_3_discount: slabData['slab_3_discount'] ?? 0,
+          ),
+        ),
 
-                            return ItemCard(
-                              imgPath: item.imgUrl,
-                              price: getPrice(item, loggedInArea),
-                              itemId: item.id,
-                              itemName: item.itemName,
-                              itemDetails: item.itemDetails,
-                              slab_1_start: slabData['slab_1_start'] ?? 1000,
-                              slab_1_end: slabData['slab_1_end'] ?? 1000,
-                              slab_2_start: slabData['slab_2_start'] ?? 1000,
-                              slab_2_end: slabData['slab_2_end'] ?? 1000,
-                              slab_3_start: slabData['slab_3_start'] ?? 1000,
-                              slab_3_end: slabData['slab_3_end'] ?? 1000,
-                              slab_1_discount: slabData['slab_1_discount'] ?? 0,
-                              slab_2_discount: slabData['slab_2_discount'] ?? 0,
-                              slab_3_discount: slabData['slab_3_discount'] ?? 0,
+        // Subtle black overlay
+        if (soldOut)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.35),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+
+        // Bottom SOLD OUT strip
+        if (soldOut)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: const BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'SOLD OUT',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ),
+      ],)
                             );
                           },
                         ),
