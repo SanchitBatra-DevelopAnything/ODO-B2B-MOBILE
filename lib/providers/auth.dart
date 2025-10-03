@@ -11,13 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthProvider with ChangeNotifier {
   List<Area> _areas = [];
   List<Referrer> _referrers = [];
-  List<Distributor> _distributors = [];
+  Map<String , Distributor> _distributors = {};
 
   String loggedInDistributor = "";
   String loggedInArea = "";
   String activePriceList = "";
   String activeDistributorKey = "";
-  int activeDistributorIndex = -1;
+  Distributor? activeDistributor = null;
   String loggedInShop = "";
   String loggedIncontact = "";
   String loggedInGSTNumber = "";
@@ -44,18 +44,19 @@ class AuthProvider with ChangeNotifier {
     _referrers.map((e) => e.referrerName).toList()..sort();
 
 
-  List<Distributor> get distributors {
-    return [..._distributors];
+  Map<String , Distributor> get distributors {
+    return {..._distributors};
   }
 
   List<String> get distributorNames {
-    return [..._distributors]
-        .map((retailer) => retailer.distributorName)
-        .toList();
-  }
+  return _distributors.values
+      .map((distributor) => distributor.distributorName)
+      .toList();
+}
 
-   void setActiveDistributorIndex(int newIndex) {
-    activeDistributorIndex = newIndex;
+
+   void setActiveDistributor(Distributor distributor) {
+    activeDistributor = distributor;
     notifyListeners(); // Notify widgets to rebuild
   }
 
@@ -122,31 +123,36 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> fetchDistributorsFromDB() async {
-    const url =
-        "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/Distributors.json";
-    try {
-      final response = await http.get(Uri.parse(url));
-      final List<Distributor> loadedDistributors = [];
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      extractedData.forEach((distributorId, distributorData) {
-        loadedDistributors.add(Distributor(
-            id: distributorId,
-            area: distributorData['area'],
-            distributorName: distributorData['name'],
-            shop: distributorData['shop'],
-            contact: distributorData['contact'].toString(),
-            attached_price_list : "normal-price-list",
-            shopAddress : distributorData['shopAddress'].toString(),
-            latitude: distributorData['latitude']?.toString() ?? "not-found",
-            longitude: distributorData['longitude']?.toString() ?? "not-found",
-            GSTNumber: distributorData['GST']));
-      });
-      _distributors = loadedDistributors;
-      notifyListeners();
-    } catch (error) {
-      rethrow;
-    }
+  const url =
+      "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/Distributors.json";
+  try {
+    final response = await http.get(Uri.parse(url));
+    final Map<String, Distributor> loadedDistributors = {};
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+    extractedData.forEach((distributorId, distributorData) {
+      final contact = distributorData['contact'].toString();
+      loadedDistributors[contact] = Distributor(
+        id: distributorId,
+        area: distributorData['area'],
+        distributorName: distributorData['name'],
+        shop: distributorData['shop'],
+        contact: contact,
+        attached_price_list: "normal-price-list",
+        shopAddress: distributorData['shopAddress'].toString(),
+        latitude: distributorData['latitude']?.toString() ?? "not-found",
+        longitude: distributorData['longitude']?.toString() ?? "not-found",
+        GSTNumber: distributorData['GST'],
+      );
+    });
+
+    _distributors = loadedDistributors; // Now a Map<String, Distributor>
+    notifyListeners();
+  } catch (error) {
+    rethrow;
   }
+}
+
 
   Future<void> loadLoggedInDistributorData() async {
     final SharedPreferences sharedPreferences =
@@ -166,23 +172,23 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setLoggedInDistributorAndArea(String distributorKey) async {
+  Future<void> setLoggedInDistributorAndArea(Distributor distributor) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-    sharedPreferences.setString("loggedInDistributor", _distributors[activeDistributorIndex].distributorName);
-    sharedPreferences.setString("loggedInArea", _distributors[activeDistributorIndex].area);
+    sharedPreferences.setString("loggedInDistributor", distributor.distributorName);
+    sharedPreferences.setString("loggedInArea", distributor.area);
     sharedPreferences.setString("priceList", "normal");
-    sharedPreferences.setString("loggedInShop" , _distributors[activeDistributorIndex].shop);
-    sharedPreferences.setString("loggedIncontact" , _distributors[activeDistributorIndex].contact);
-    sharedPreferences.setString("loggedInGSTNumber",_distributors[activeDistributorIndex].GSTNumber);
-    sharedPreferences.setString("loggedInShopAddress" , _distributors[activeDistributorIndex].shopAddress);
-    sharedPreferences.setString("distributorKey", distributorKey);
-    sharedPreferences.setString("latitude", _distributors[activeDistributorIndex].latitude);
-    sharedPreferences.setString("longitude", _distributors[activeDistributorIndex].longitude);
-    loggedInDistributor = _distributors[activeDistributorIndex].distributorName;
-    loggedInArea = _distributors[activeDistributorIndex].area;
+    sharedPreferences.setString("loggedInShop" , distributor.shop);
+    sharedPreferences.setString("loggedIncontact" , distributor.contact);
+    sharedPreferences.setString("loggedInGSTNumber",distributor.GSTNumber);
+    sharedPreferences.setString("loggedInShopAddress" , distributor.shopAddress);
+    sharedPreferences.setString("distributorKey", distributor.id);
+    sharedPreferences.setString("latitude", distributor.latitude);
+    sharedPreferences.setString("longitude", distributor.longitude);
+    loggedInDistributor = distributor.distributorName;
+    loggedInArea = distributor.area;
     activePriceList = "normal";
-    activeDistributorKey = distributorKey;
+    activeDistributorKey = distributor.id;
     notifyListeners();
   }
 
