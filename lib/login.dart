@@ -53,46 +53,50 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void startLoginProcess(BuildContext context) {
-    var isPresent = false;
-    var distributorKey = "";
-    var distributors =
-        Provider.of<AuthProvider>(context, listen: false).distributors;
-    distributors.asMap().forEach((index , distributor) {
-      if (contactController.text.trim() ==
-              distributor.contact.trim() &&
-          selectedArea.toString().toLowerCase() ==
-              distributor.area.toLowerCase()) {
-        isPresent = true;
-        Provider.of<AuthProvider>(context , listen:false).setActiveDistributorIndex(index);
-        distributorKey = distributor.id;
+  final contact = contactController.text.trim();
+  final area = selectedArea.toString().toLowerCase();
+
+  final distributors =
+      Provider.of<AuthProvider>(context, listen: false).distributors;
+
+  // Check if contact exists as a key
+  if (distributors.containsKey(contact)) {
+    final distributor = distributors[contact]!;
+
+    // Check if area matches
+    if (distributor.area.toLowerCase() == area) {
+      // Valid distributor
+      Provider.of<AuthProvider>(context, listen: false)
+          .setActiveDistributor(distributor);
+
+      Provider.of<AuthProvider>(context, listen: false)
+          .setLoggedInDistributorAndArea(distributor);
+
+      if (mounted) {
+        setState(() {
+          _invalidLogin = false;
+        });
       }
-      if (isPresent) {
-        if (mounted) {
-          setState(() {
-            _invalidLogin = false;
-          });
-        }
-        Provider.of<AuthProvider>(context, listen: false)
-            .setLoggedInDistributorAndArea(distributorKey);
 
-        Navigator.of(context).pushNamedAndRemoveUntil(
-  '/categories',
-  (Route<dynamic> route) => false,
-);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/categories',
+        (Route<dynamic> route) => false,
+      );
 
-      } else {
-        if (mounted) {
-          setState(() {
-            _invalidLogin = true;
-          });
-        }
-      }
-    });
-
-    if (_invalidLogin) {
-      showAlertDialog(context);
+      return; // ✅ Stop further execution
     }
   }
+
+  // If no match found
+  if (mounted) {
+    setState(() {
+      _invalidLogin = true;
+    });
+  }
+
+  showAlertDialog(context);
+}
+
 
   showAlertDialog(BuildContext context) {
     showDialog(
