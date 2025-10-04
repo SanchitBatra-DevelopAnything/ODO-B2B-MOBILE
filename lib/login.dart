@@ -21,8 +21,9 @@ class _LoginPageState extends State<LoginPage> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   String? selectedArea;
   bool _isFirstTime = true;
-  bool isLoading = true;
+  bool isLoading = false;
   bool _invalidLogin = false;
+  bool _showLoginMessage=false;
   
 
  
@@ -35,26 +36,31 @@ class _LoginPageState extends State<LoginPage> {
     }
     if (_isFirstTime) {
       Provider.of<AuthProvider>(context, listen: false).fetchAreasFromDB();
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
-      Provider.of<AuthProvider>(context, listen: false)
-          .fetchDistributorsFromDB()
-          .then((value) => {
-                setState(
-                  () => isLoading = false,
-                )
-              });
     }
     _isFirstTime = false; //never run the above if again.
     super.didChangeDependencies();
   }
 
-  void startLoginProcess(BuildContext context) {
+  void startLoginProcess(BuildContext context) async {
+
+  setState(() {
+    _showLoginMessage = true;
+  });
   final contact = contactController.text.trim();
   final area = selectedArea.toString().toLowerCase();
+
+  if(contact == null || area == null || contact.length != 10){
+    setState(() {
+      _invalidLogin = true;
+      isLoading = false;
+      _showLoginMessage=false;
+    });
+    showAlertDialog(context);
+    return;
+  }
+
+  await Provider.of<AuthProvider>(context, listen: false)
+          .fetchDistributorsFromDB();
 
   final distributors =
       Provider.of<AuthProvider>(context, listen: false).distributors;
@@ -75,6 +81,8 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         setState(() {
           _invalidLogin = false;
+          isLoading = false;
+          _showLoginMessage=false;
         });
       }
 
@@ -91,6 +99,8 @@ class _LoginPageState extends State<LoginPage> {
   if (mounted) {
     setState(() {
       _invalidLogin = true;
+      isLoading = false;
+      _showLoginMessage=false;
     });
   }
 
@@ -111,7 +121,25 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final areas = Provider.of<AuthProvider>(context).areaNames;
     return SafeArea(
-      child: Scaffold(
+      child: _showLoginMessage == true ? Scaffold(
+        backgroundColor: Colors.black,
+        body : Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SpinKitPouringHourGlass(
+                color: Colors.white,
+                size: 50.0,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Setting up ODO for you! Please wait..",
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ],
+          ),
+        ),
+      ) : Scaffold(
         backgroundColor: const Color(0XFFf5f5f5),
         body: GestureDetector(
           onTap: () {

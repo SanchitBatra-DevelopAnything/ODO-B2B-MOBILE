@@ -74,10 +74,18 @@ Future<void> _performInitialAuth() async {
 }
 
 Future<void> _fetchCategories() async {
+  final startTime = DateTime.now(); // Start timer
+
   final isBulandshehar = decideOnCoke();
   await Provider.of<CategoriesProvider>(context, listen: false)
       .fetchCategoriesFromDB(isBulandshehar: isBulandshehar);
+
+  final endTime = DateTime.now(); // End timer
+  final duration = endTime.difference(startTime);
+
+  print('⏱️ _fetchCategories took ${duration.inMilliseconds} ms');
 }
+
 
 Future<void> _fetchCart() async {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
