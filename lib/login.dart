@@ -55,10 +55,11 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = false;
       _showLoginMessage=false;
     });
-    showAlertDialog(context);
+    showAlertDialog(context , "Invalid Login!" , "It might be that you provided correct credentials , but admin has not approved you yet. Try logging in after some time , if already registered!");
     return;
   }
 
+  try{
   await Provider.of<AuthProvider>(context, listen: false)
           .fetchDistributorsFromDB();
 
@@ -104,17 +105,28 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  showAlertDialog(context);
-}
+  showAlertDialog(context , "Invalid Login!" , "It might be that you provided correct credentials , but admin has not approved you yet. Try logging in after some time , if already registered!");
+}catch(e){
+  if (mounted) {
+    setState(() {
+      _invalidLogin = false;
+      isLoading = false;
+      _showLoginMessage=false;
+    });
+  }
+    showAlertDialog(context, "Unable to login!", e.toString());
+  }
+  }
 
 
-  showAlertDialog(BuildContext context) {
+
+  showAlertDialog(BuildContext context , String title_alert , String content_alert) {
     showDialog(
         context: context,
         builder: (context) => PlatformDialog(
-            title: "Invalid Login!",
+            title: title_alert,
             content:
-                "It might be that you provided correct credentials , but admin has not approved you yet. Try logging in after some time , if already registered!"));
+                content_alert));
   }
 
   @override
