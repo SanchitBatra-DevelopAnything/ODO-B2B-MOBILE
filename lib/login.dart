@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               Text(
-                "Setting up ODO for you! Please wait..",
+                "Getting things ready! Please wait..",
                 style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
             ],
