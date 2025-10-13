@@ -110,6 +110,8 @@ class _CartScreenState extends State<CartScreen> {
     // var totalOrderPrice = cartProviderObject.getTotalOrderPrice();
     var totalOrderPrice = cartProviderObject.getTotalOrderPrice();
     var remainingPrice = 3000-totalOrderPrice;
+    final loggedInContact = authProviderObject.loggedIncontact;
+    final loggedInDistributor = authProviderObject.loggedInDistributor;
 
     return WillPopScope(
       onWillPop: () async {
@@ -179,10 +181,10 @@ class _CartScreenState extends State<CartScreen> {
                       ]),
                       !isPlacingOrder
                           ? CupertinoButton(
-                              onPressed: totalOrderPrice>=3000 ? () {
+                              onPressed: (totalOrderPrice>=3000 && loggedInContact!='8888888888' && loggedInDistributor!='NO-ORDER-USER') ? () {
                                 placeOrder(context);
                               } : null,
-                              color: totalOrderPrice>=3000 ? Colors.black : Colors.grey,
+                              color: (totalOrderPrice>=3000 && loggedInContact!='8888888888' && loggedInDistributor!='NO-ORDER-USER') ? Colors.black : Colors.grey,
                               child: const Text(
                                 "Place Order",
                                 style: TextStyle(fontWeight: FontWeight.bold),
