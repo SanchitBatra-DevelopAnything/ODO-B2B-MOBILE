@@ -59,10 +59,26 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
 
   Future<String> getInitialRoute() async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
-    print("keyd");
-    print(sp.getKeys());
     if (sp.containsKey('loggedInDistributor')) {
-      return '/categories';
+      String loggedIncontact = sp.getString('loggedIncontact') ?? '';
+      if(loggedIncontact == '' || loggedIncontact.isEmpty){
+        return '/';
+      }
+      else
+      {
+        //call authProvider to check if contact is still valid
+        AuthProvider authProvider = AuthProvider();
+        bool isValid = await authProvider.checkDistributorContact(loggedIncontact);
+        if(!isValid){
+          //clear shared preferences
+          sp.clear();
+          return '/';
+        }
+        else
+        {
+          return '/categories';
+        }
+      }
     }
     return '/';
   }
@@ -118,7 +134,25 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
             );
           }
         } else {
-          return const CircularProgressIndicator();
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: Scaffold(
+              // Black screen bold letters text telling "Setting up ODO..",
+              body: Container(
+                color: Colors.black,
+                child: const Center(
+                  child: Text(
+                    'Checking your credentials... Please wait.',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
         }
       }),
     );

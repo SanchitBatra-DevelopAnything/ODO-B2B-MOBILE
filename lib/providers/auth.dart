@@ -206,4 +206,32 @@ class AuthProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  //this is to invalidate session of loggedInDistributor if he is no longer active now.
+  //makes a call to firebase function which return true or false.
+  Future<bool> checkDistributorContact(String contact) async {
+  final url = Uri.parse(
+    'https://checkdistributorcontact-jipkkwipyq-uc.a.run.app',
+  );
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'contact': contact}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['exists'] == true;
+    } else {
+      print('Server error: ${response.statusCode} -> ${response.body}');
+      return false;
+    }
+  } catch (e) {
+    print('Error calling Cloud Function: $e');
+    return false;
+  }
+}
+
 }
