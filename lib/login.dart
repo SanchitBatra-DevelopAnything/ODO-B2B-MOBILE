@@ -233,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                                 color: Colors.black,
                                 child: const Text(
-                                  "Login",
+                                  "GET OTP",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
