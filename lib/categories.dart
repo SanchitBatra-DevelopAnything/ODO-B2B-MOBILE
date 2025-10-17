@@ -328,7 +328,7 @@ void showErrorDialog(String error) {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  loggedInDistributor != 'null'
+                  (loggedInDistributor != 'null' && loggedInDistributor!='NO-ORDER-USER')
                       ? IconButton(
                           icon: const Icon(Icons.arrow_back_ios),
                           color: Colors.white,

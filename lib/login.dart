@@ -120,6 +120,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   sendOTP(distributor) async {
+
+    if(distributor.contact == '8888888888' && distributor.distributorName == 'NO-ORDER-USER'){
+      //bypass OTP for no-order-user.
+       Provider.of<AuthProvider>(context, listen: false)
+            .setActiveDistributor(distributor);
+
+        Provider.of<AuthProvider>(context, listen: false)
+            .setLoggedInDistributorAndArea(distributor);
+
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/categories', (route) => false);
+      return;
+    }
+
     if (mounted) {
       setState(() {
         _invalidLogin = false;
