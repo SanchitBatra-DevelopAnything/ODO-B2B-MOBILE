@@ -1,7 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
+import 'package:odo_mobile_v2/providers/auth.dart';
 import 'package:pinput/pinput.dart';
 import 'package:odo_mobile_v2/models/distributor.dart';
+import 'package:provider/provider.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class _OTPScreenState extends State<OTPScreen> {
   late Distributor distributorToValidate;
   late String verificationID;
   String code = '';
+  bool _isLoading = false; // Loading state
 
   final _pinController = TextEditingController();
   final _focusNode = FocusNode();
@@ -27,24 +30,40 @@ class _OTPScreenState extends State<OTPScreen> {
     verificationID = args['verificationID'];
   }
 
-  void signIn() async{
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationID,
-        smsCode: code
-    );
-    try
-    {
-      await FirebaseAuth.instance.signInWithCredential(credential).then((value) => {
-        Navigator.of(context).pushNamedAndRemoveUntil('/categories', (route) => false,),
+  void signIn() async {
+    if (_isLoading) return; // Prevent multiple triggers
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    PhoneAuthCredential credential =
+        PhoneAuthProvider.credential(verificationId: verificationID, smsCode: code);
+
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+        // Valid login scenario
+        Provider.of<AuthProvider>(context, listen: false)
+            .setActiveDistributor(distributorToValidate);
+
+        Provider.of<AuthProvider>(context, listen: false)
+            .setLoggedInDistributorAndArea(distributorToValidate);
+
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/categories', (route) => false);
       });
-    }
-    catch(e)
-    {
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error during sign-in: $e'),
         ),
       );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false; // Reset loading state
+        });
+      }
     }
   }
 
@@ -99,14 +118,23 @@ class _OTPScreenState extends State<OTPScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: signIn, // Triggers signIn function
+                  onPressed: _isLoading ? null : signIn, // Disable while loading
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
+                    backgroundColor: Colors.black,
                   ),
-                  child: const Text(
-                    'Verify & Proceed',
-                    style: TextStyle(color: Colors.white), // Text color
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.black, // Spinner color
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Verify & Proceed',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
             ],
