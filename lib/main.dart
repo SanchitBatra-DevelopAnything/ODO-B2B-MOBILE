@@ -10,6 +10,7 @@ import 'package:odo_mobile_v2/myOrders.dart';
 import 'package:odo_mobile_v2/myProfile.dart';
 import 'package:odo_mobile_v2/afterSignUp.dart';
 import 'package:odo_mobile_v2/orderDone.dart';
+import 'package:odo_mobile_v2/otp.dart';
 import 'package:odo_mobile_v2/providers/auth.dart';
 import 'package:odo_mobile_v2/providers/cart.dart';
 import 'package:odo_mobile_v2/providers/categories_provider.dart';
@@ -109,6 +110,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
                 '/orderSummary': (context) => OrderSummary(),
                 '/profile': (context) => const MyProfile(),
                 '/afterSignUp':(context) => SignUpCompleted(),
+                '/otp':(context) => OTPScreen(),
               },
             );
           } else {
@@ -130,6 +132,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
                 '/myOrders': (context) => const MyOrders(),
                 '/orderSummary': (context) => OrderSummary(),
                 '/afterSignUp' : (context) => SignUpCompleted(),
+                '/otp' : (context)=> OTPScreen(),
               },
             );
           }

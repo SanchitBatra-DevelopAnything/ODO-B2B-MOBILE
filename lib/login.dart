@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'PlatformDialog.dart';
 import 'PlatformTextField.dart';
+import 'package:odo_mobile_v2/providers/auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -73,11 +75,13 @@ class _LoginPageState extends State<LoginPage> {
     // Check if area matches
     if (distributor.area.toLowerCase() == area) {
       // Valid distributor
-      Provider.of<AuthProvider>(context, listen: false)
-          .setActiveDistributor(distributor);
+      // Provider.of<AuthProvider>(context, listen: false)
+      //     .setActiveDistributor(distributor);
 
-      Provider.of<AuthProvider>(context, listen: false)
-          .setLoggedInDistributorAndArea(distributor);
+      // Provider.of<AuthProvider>(context, listen: false)
+      //     .setLoggedInDistributorAndArea(distributor);
+
+      await sendOTP(distributor);
 
       if (mounted) {
         setState(() {
@@ -87,10 +91,10 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        '/categories',
-        (Route<dynamic> route) => false,
-      );
+      // Navigator.of(context).pushNamedAndRemoveUntil(
+      //   '/categories',
+      //   (Route<dynamic> route) => false,
+      // );
 
       return; // ✅ Stop further execution
     }
@@ -116,6 +120,30 @@ class _LoginPageState extends State<LoginPage> {
   }
     showAlertDialog(context, "Unable to login!", e.toString());
   }
+  }
+
+
+  sendOTP(distributor) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(phoneNumber: '+91'+contactController.text.trim(),
+    verificationCompleted: (PhoneAuthCredential credentials){
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/categories',
+        (Route<dynamic> route) => false,
+      );
+    },
+     verificationFailed: (FirebaseAuthException e){print('verificationFailed due to '+e.toString());}, 
+     codeSent: (String vid , int? token){
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/otp',
+        (Route<dynamic> route) => false,
+        arguments: {
+    'distributorToValidate': distributor,
+    'verificationID': vid,
+  },
+      );
+     }, 
+     codeAutoRetrievalTimeout: (String vid){print('codeAutoRetrievalTimeout');}
+     );
   }
 
 
