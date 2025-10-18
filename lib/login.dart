@@ -80,15 +80,6 @@ class _LoginPageState extends State<LoginPage> {
         // Check if area matches
         if (distributor.area.toLowerCase() == area) {
           await sendOTP(distributor);
-
-          if (mounted) {
-            setState(() {
-              _invalidLogin = false;
-              isLoading = false;
-              _showLoginMessage = false;
-            });
-          }
-
           return; // ✅ Stop further execution
         }
       }
@@ -134,25 +125,15 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (mounted) {
       setState(() {
-        _invalidLogin = false;
-        isLoading = true;
-        _showLoginMessage = false;
-      });
-    }
+    _showLoginMessage = true; // Show loader when verification starts
+  });
 
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '+91' + contactController.text.trim(),
       timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credentials) {
-        if (mounted) {
-          setState(() {
-            _invalidLogin = false;
-            isLoading = false;
-            _showLoginMessage = false;
-          });
-        }
+        if (mounted) setState(() => _showLoginMessage = false);
 
         //agar OTP apne aap pakad liya to..
         Navigator.of(context).pushNamedAndRemoveUntil(
@@ -162,13 +143,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       verificationFailed: (FirebaseAuthException e) {
         //Scaffold snackbar to show what failed
-        if (mounted) {
-          setState(() {
-            _invalidLogin = false;
-            isLoading = false;
-            _showLoginMessage = false;
-          });
-        }
+       if (mounted) setState(() => _showLoginMessage = false);
 
         showAlertDialog(
           context,
@@ -177,13 +152,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
       codeSent: (String vid, int? token) {
-        if (mounted) {
-          setState(() {
-            _invalidLogin = false;
-            isLoading = false;
-            _showLoginMessage = false;
-          });
-        }
+       if (mounted) setState(() => _showLoginMessage = false);
 
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/otp',
@@ -196,13 +165,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       codeAutoRetrievalTimeout: (String vid) {
         //Scaffold snackbar to tell OTP timedout , please re-login again to generate a new OTP.
-        if (mounted) {
-          setState(() {
-            _invalidLogin = false;
-            isLoading = false;
-            _showLoginMessage = false;
-          });
-        }
+        if (mounted) setState(() => _showLoginMessage = false);
 
         showAlertDialog(
           context,

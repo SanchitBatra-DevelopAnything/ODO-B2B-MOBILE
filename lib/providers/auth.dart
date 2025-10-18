@@ -234,4 +234,14 @@ class AuthProvider with ChangeNotifier {
   }
 }
 
+bool isNoOrderUser()
+{
+  print(activeDistributor);
+  if(loggedInDistributor == ("NO-ORDER-USER") && loggedIncontact=="8888888888")
+  {
+    return true;
+  }
+  return false;
+}
+
 }

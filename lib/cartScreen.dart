@@ -113,6 +113,9 @@ class _CartScreenState extends State<CartScreen> {
     final loggedInContact = authProviderObject.loggedIncontact;
     final loggedInDistributor = authProviderObject.loggedInDistributor;
 
+    bool isNoOrderUser = Provider.of<AuthProvider>(context, listen: false)
+        .isNoOrderUser();
+
     return WillPopScope(
       onWillPop: () async {
         setState(() {
@@ -181,7 +184,7 @@ class _CartScreenState extends State<CartScreen> {
                       ]),
                       !isPlacingOrder
                           ? CupertinoButton(
-                              onPressed: (totalOrderPrice>=3000 && loggedInContact!='8888888888' && loggedInDistributor!='NO-ORDER-USER') ? () {
+                              onPressed: (totalOrderPrice>=3000 && !isNoOrderUser) ? () {
                                 placeOrder(context);
                               } : null,
                               color: (totalOrderPrice>=3000 && loggedInContact!='8888888888' && loggedInDistributor!='NO-ORDER-USER') ? Colors.black : Colors.grey,

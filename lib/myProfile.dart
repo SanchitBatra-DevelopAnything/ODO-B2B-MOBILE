@@ -85,6 +85,7 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNoOrderUser = Provider.of<AuthProvider>(context, listen: false).isNoOrderUser();
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 235, 229, 229),
@@ -124,64 +125,6 @@ class _MyProfileState extends State<MyProfile> {
                   const SizedBox(
                     height: 10,
                   ),
-                  // ListTile(
-                  //     onTap: (() => {
-                  //           Navigator.of(context).pushNamed("/myOrders"),
-                  //         }),
-                  //     trailing: Icon(
-                  //       Icons.arrow_forward_ios,
-                  //       color: Colors.black,
-                  //       size: 25,
-                  //     ),
-                  //     leading: Icon(
-                  //       Icons.shopping_bag,
-                  //       size: 28,
-                  //       color: Colors.black,
-                  //     ),
-                  //     tileColor: Colors.white,
-                  //     subtitle: Text("Get updates on your orders here"),
-                  //     title: Text(
-                  //       "My Orders",
-                  //       style: TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 20,
-                  //           fontWeight: FontWeight.bold),
-                  //     )),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  // ListTile(
-                  //     onTap: (() => {
-                  //           if (pathPDF.isNotEmpty)
-                  //             {
-                  //               Navigator.push(
-                  //                 context,
-                  //                 MaterialPageRoute(
-                  //                   builder: (context) =>
-                  //                       TermsAndConditionsPage(path: pathPDF),
-                  //                 ),
-                  //               )
-                  //             }
-                  //         }),
-                  //     trailing: Icon(
-                  //       Icons.arrow_forward_ios,
-                  //       color: Colors.black,
-                  //       size: 25,
-                  //     ),
-                  //     leading: Icon(
-                  //       Icons.description,
-                  //       size: 28,
-                  //       color: Colors.black,
-                  //     ),
-                  //     tileColor: Colors.white,
-                  //     subtitle: Text("Please read it carefully."),
-                  //     title: Text(
-                  //       "TERMS & CONDITIONS",
-                  //       style: TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 20,
-                  //           fontWeight: FontWeight.bold),
-                  //     )),
                   const SizedBox(
                     height: 10,
                   ),
@@ -204,7 +147,7 @@ class _MyProfileState extends State<MyProfile> {
                       const SizedBox(
                     height: 10,
                   ),
-                  ListTile(
+                  !isNoOrderUser ? ListTile(
                       onTap: () => {showLogoutBox(context)},
                       leading: const Icon(
                         Icons.logout_outlined,
@@ -219,11 +162,28 @@ class _MyProfileState extends State<MyProfile> {
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
-                      )),
+                      )) : GestureDetector(
+                        onDoubleTap: () => {showLogoutBox(context)},
+                        child: ListTile(
+                        leading: const Icon(
+                          Icons.logout_outlined,
+                          size: 28,
+                          color: Colors.black,
+                        ),
+                        tileColor: Colors.white,
+                        subtitle: const Text("Admin has not given you access to logout."),
+                        title: const Text(
+                          "You cannot logout.",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        )),
+                      ),
                   const SizedBox(
                     height: 10,
                   ),
-                  ListTile(
+                  !isNoOrderUser ? ListTile(
                       onTap: () => {showDeleteAccountBox(context)},
                       leading: const Icon(
                         Icons.delete_forever,
@@ -238,7 +198,7 @@ class _MyProfileState extends State<MyProfile> {
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
-                      )),
+                      )) : Container(),
                   const SizedBox(
                     height: 10,
                   ),
