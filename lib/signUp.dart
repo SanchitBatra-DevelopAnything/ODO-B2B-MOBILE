@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,19 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
+  /// ☁️ Upload image to Firebase Storage and return URL
+  Future<String?> uploadImageToFirebase(File image) async {
+    try {
+      final fileName = 'signups/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = FirebaseStorage.instance.ref().child(fileName);
+      final uploadTask = await ref.putFile(image);
+      return await uploadTask.ref.getDownloadURL();
+    } catch (e) {
+      print("Image upload failed: $e");
+      return null;
+    }
+  }
+
   Future<void> signUp(BuildContext context) async {
 
      // ✅ Check if image is captured
@@ -107,6 +121,17 @@ class _SignUpFormState extends State<SignUpForm> {
         isSigningUp = true;
       });
 
+      final String? uploadedImageUrl = await uploadImageToFirebase(_capturedImage!);
+      
+      if(uploadedImageUrl == null)
+      {
+        showSnackBar(context, "Image upload failed. Please try again later.");
+        setState(() => isSigningUp = false);
+        return;
+      }
+
+      
+
       await Provider.of<AuthProvider>(context, listen: false).distributorSignUp(
         usernameController.text.trim().toString().toUpperCase(),
         selectedArea.toString().trim().toUpperCase(),
@@ -117,6 +142,7 @@ class _SignUpFormState extends State<SignUpForm> {
         position.latitude.toString(),
         position.longitude.toString(),
         selectedReferrer.toString().trim().toUpperCase(),
+        uploadedImageUrl.toString(),
       );
 
       setState(() {
