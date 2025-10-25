@@ -86,7 +86,14 @@ class _SignUpFormState extends State<SignUpForm> {
   /// ☁️ Upload image to Firebase Storage and return URL
   Future<String?> uploadImageToFirebase(File image) async {
     try {
-      final fileName = 'signups/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final now = DateTime.now();
+      final year = now.year;
+      final month = now.month.toString().padLeft(2, '0'); // e.g., "10"
+      final day = now.day.toString().padLeft(2, '0'); // e.g., "25"
+
+      // ✅ Structured folder path
+      final fileName =
+          'signups/$year/$month/$day/${now.millisecondsSinceEpoch}.jpg';
       final ref = FirebaseStorage.instance.ref().child(fileName);
       final uploadTask = await ref.putFile(image);
       return await uploadTask.ref.getDownloadURL();
@@ -97,10 +104,12 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   Future<void> signUp(BuildContext context) async {
-
-     // ✅ Check if image is captured
+    // ✅ Check if image is captured
     if (_capturedImage == null) {
-      showSnackBar(context, "Please capture your selfie with shop board for proper verification.");
+      showSnackBar(
+        context,
+        "Please capture your selfie with shop board for proper verification.",
+      );
       return;
     }
 
@@ -121,16 +130,15 @@ class _SignUpFormState extends State<SignUpForm> {
         isSigningUp = true;
       });
 
-      final String? uploadedImageUrl = await uploadImageToFirebase(_capturedImage!);
-      
-      if(uploadedImageUrl == null)
-      {
+      final String? uploadedImageUrl = await uploadImageToFirebase(
+        _capturedImage!,
+      );
+
+      if (uploadedImageUrl == null) {
         showSnackBar(context, "Image upload failed. Please try again later.");
         setState(() => isSigningUp = false);
         return;
       }
-
-      
 
       await Provider.of<AuthProvider>(context, listen: false).distributorSignUp(
         usernameController.text.trim().toString().toUpperCase(),
@@ -356,62 +364,64 @@ class _SignUpFormState extends State<SignUpForm> {
                     const SizedBox(height: 20),
 
                     Center(
-                    child: Column(
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: captureImage,
-                          icon: const Icon(Icons.camera_alt),
-                          label: const Text(
-                            "Capture Photo",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                      child: Column(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: captureImage,
+                            icon: const Icon(Icons.camera_alt),
+                            label: const Text(
+                              "Capture Photo",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Show captured image preview (if available)
-                        if (_capturedImage != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              _capturedImage!,
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        else
-                          Container(
-                            width: double.infinity,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.grey[100],
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "No photo captured yet",
-                                style: TextStyle(color: Colors.grey),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                      ],
-                    ),
-                  ),
+                          const SizedBox(height: 16),
 
-                  const SizedBox(height: 30),
+                          // Show captured image preview (if available)
+                          if (_capturedImage != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                _capturedImage!,
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          else
+                            Container(
+                              width: double.infinity,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.grey[100],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "No photo captured yet",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
