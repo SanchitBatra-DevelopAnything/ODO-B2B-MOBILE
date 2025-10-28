@@ -26,7 +26,6 @@ class AuthProvider with ChangeNotifier {
   String loggedInLongitude = "";
 
   String dbURL = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/";
-  String apiUrl = "https://odo-b2b-api-production.up.railway.app/";
   String? _deviceToken = "";
 
   String? get deviceToken {
@@ -90,8 +89,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> fetchAreasFromDB() async {
-    // const url = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/Areas.json";
-    const url = "https://odo-b2b-api-production.up.railway.app/v1/areas";
+    const url = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/Areas.json";
+    
     try {
       final response = await http.get(Uri.parse(url));
       final List<Area> loadedAreas = [];
