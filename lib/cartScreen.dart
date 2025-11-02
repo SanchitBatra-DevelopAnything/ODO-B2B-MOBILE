@@ -78,11 +78,12 @@ class _CartScreenState extends State<CartScreen> {
       String shopAddress = Provider.of<AuthProvider>(context , listen:false).loggedInShopAddress;
       String latitude = Provider.of<AuthProvider>(context, listen: false).loggedInLatitude;
       String longitude = Provider.of<AuthProvider>(context, listen: false).loggedInLongitude;
+      String referrerId = Provider.of<AuthProvider>(context, listen: false).loggedInReferrerId;
 
       //yahan jinki location nahi hai unki lena enforce kar sakte hain hum..
 
       await Provider.of<CartProvider>(context, listen: false)
-          .PlaceDistributorOrder(area, distributor, time, "normalPriceList", token , shop , GST, contact , shopAddress , latitude , longitude);
+          .PlaceDistributorOrder(area, distributor, time, "normalPriceList", token , shop , GST, contact , shopAddress , latitude , longitude , referrerId);
       cartObject.clearCart();
       await cartObject.deleteCartOnDB(distributor, area);
       Navigator.pushNamedAndRemoveUntil(

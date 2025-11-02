@@ -272,7 +272,8 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<void> PlaceDistributorOrder(String area, String loggedInDistributor,
-      String time, String activePriceList, String deviceToken , String shop , String GST , String contact , String shopAddress , String latitude , String longitude) async {
+      String time, String activePriceList, String deviceToken , String shop , String GST , String contact , String shopAddress , String latitude , String longitude
+      , String referrerId) async {
     var todaysDate = DateTime.now();
     var year = todaysDate.year.toString();
     var month = todaysDate.month.toString();
@@ -296,7 +297,8 @@ class CartProvider with ChangeNotifier {
             "totalPrice": getTotalOrderPrice(isMrpCalculated : true),
             "totalPriceAfterDiscount" : getTotalOrderPrice(isMrpCalculated: false),
             "delivery-latitude" : latitude,
-            "delivery-longitude" : longitude
+            "delivery-longitude" : longitude,
+            'referrerId' : referrerId,
           }));
     } catch (error) {
       print("ERROR IS");
