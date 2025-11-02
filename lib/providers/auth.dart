@@ -115,12 +115,20 @@ class AuthProvider with ChangeNotifier {
       final List<Referrer> loadedReferrers = [];
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       extractedData.forEach((referrerId, referrerData) {
-        loadedReferrers.add(Referrer(referrerName: referrerData['referrerName']));
+        loadedReferrers.add(Referrer(referrerName: referrerData['referrerName'] , referrerId: referrerId));
       });
       _referrers = loadedReferrers;
       notifyListeners();
     } catch (error) {
       rethrow;
+    }
+  }
+
+  String getReferrerIdByName(String referrerName) {
+    try {
+      return _referrers.firstWhere((referrer) => referrer.referrerName == referrerName).referrerId;
+    } catch (e) {
+      return "not-found";
     }
   }
 

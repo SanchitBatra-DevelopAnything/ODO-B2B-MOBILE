@@ -52,6 +52,7 @@ dependencies:
   pinput: ^3.0.1
   image_picker: ^1.2.0
   firebase_storage: ^12.3.2
+  mobile_scanner: ^5.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

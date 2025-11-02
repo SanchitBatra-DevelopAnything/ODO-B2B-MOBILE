@@ -1,4 +1,5 @@
 class Referrer {
   String referrerName;
-  Referrer({required this.referrerName});
+  String referrerId;
+  Referrer({required this.referrerName , required this.referrerId});
 }

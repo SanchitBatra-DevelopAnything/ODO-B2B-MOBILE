@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:odo_mobile_v2/PlatformDialog.dart';
 import 'package:odo_mobile_v2/PlatformTextField.dart';
 import 'package:odo_mobile_v2/providers/auth.dart';
+import 'package:odo_mobile_v2/qrScanPage.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
@@ -34,6 +35,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   String? selectedArea;
   String? selectedReferrer;
+  String? selectedReferrerId;
   bool _isFirstTime = true;
   bool isSigningUp = false;
 
@@ -306,61 +308,52 @@ class _SignUpFormState extends State<SignUpForm> {
                       maxLines: 3,
                     ),
                     const SizedBox(height: 10),
-                    Container(
+                    (selectedReferrer==null && selectedReferrerId==null) ? Container(
                       padding: const EdgeInsets.all(20),
                       width: MediaQuery.of(context).size.width,
-                      child: DropdownButton<String>(
-                        items: areas.map(buildMenuItem).toList(),
-                        isExpanded: true,
-                        focusColor: const Color(0xffe6e3d3),
-                        hint: const Text(
-                          "Select Area",
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.qr_code_scanner),
+                        label: const Text(
+                          "Scan for Area & Referrer",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 16,
                           ),
                         ),
-                        dropdownColor: const Color(0XFFf5f5f5),
-                        iconSize: 36,
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
                         ),
-                        value: selectedArea,
-                        style: const TextStyle(color: Colors.black),
-                        onChanged: (value) => {
-                          setState(() => selectedArea = value),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QRScanPage(
+                                onScan: (area, referrer) {
+                                  //can be slow if list grows , but baad me map me banaa denge , abhi to bas 20-50 referrers hain.
+                                  String referrerId = Provider.of<AuthProvider>(context, listen: false)
+                                      .getReferrerIdByName(referrer);
+                                  setState(() {
+                                    selectedArea = area;
+                                    selectedReferrer = referrer;
+                                    selectedReferrerId = referrerId;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
                         },
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      width: MediaQuery.of(context).size.width,
-                      child: DropdownButton<String>(
-                        items: referrers.map(buildMenuItem).toList(),
-                        isExpanded: true,
-                        focusColor: const Color(0xffe6e3d3),
-                        hint: const Text(
-                          "Who Referred You?",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                        dropdownColor: const Color(0XFFf5f5f5),
-                        iconSize: 36,
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black,
-                        ),
-                        value: selectedReferrer,
-                        style: const TextStyle(color: Colors.black),
-                        onChanged: (value) => {
-                          setState(() => selectedReferrer = value),
-                        },
-                      ),
-                    ),
+                    ) : Column(mainAxisAlignment: MainAxisAlignment.center , crossAxisAlignment: CrossAxisAlignment.center,children: [
+                      Text('Selected Area: ${selectedArea ?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                      const SizedBox(height: 3),
+                      Text('Selected Referrer: ${selectedReferrer ?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 3),
+                      Text('Referrer ID: ${selectedReferrerId ?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                    ],),
+
                     const SizedBox(height: 20),
 
                     Center(
