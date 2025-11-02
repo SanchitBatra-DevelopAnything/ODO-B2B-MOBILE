@@ -142,6 +142,13 @@ class _SignUpFormState extends State<SignUpForm> {
         return;
       }
 
+      if(selectedReferrerId == null)
+      {
+        showSnackBar(context, "Referrer not found in system. Please contact admin.");
+        setState(() => isSigningUp = false);
+        return;
+      }
+
       await Provider.of<AuthProvider>(context, listen: false).distributorSignUp(
         usernameController.text.trim().toString().toUpperCase(),
         selectedArea.toString().trim().toUpperCase(),
@@ -153,6 +160,7 @@ class _SignUpFormState extends State<SignUpForm> {
         position.longitude.toString(),
         selectedReferrer.toString().trim().toUpperCase(),
         uploadedImageUrl.toString(),
+        selectedReferrerId.toString(),
       );
 
       setState(() {
@@ -332,7 +340,7 @@ class _SignUpFormState extends State<SignUpForm> {
                               builder: (context) => QRScanPage(
                                 onScan: (area, referrer) {
                                   //can be slow if list grows , but baad me map me banaa denge , abhi to bas 20-50 referrers hain.
-                                  String referrerId = Provider.of<AuthProvider>(context, listen: false)
+                                  String? referrerId = Provider.of<AuthProvider>(context, listen: false)
                                       .getReferrerIdByName(referrer);
                                   setState(() {
                                     selectedArea = area;
@@ -351,7 +359,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       const SizedBox(height: 3),
                       Text('Selected Referrer: ${selectedReferrer ?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 3),
-                      Text('Referrer ID: ${selectedReferrerId ?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                      Text('Referrer ID: ${selectedReferrerId?? "None"}', style: const TextStyle(fontWeight: FontWeight.bold),),
                     ],),
 
                     const SizedBox(height: 20),

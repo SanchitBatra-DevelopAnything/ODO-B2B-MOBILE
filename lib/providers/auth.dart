@@ -68,7 +68,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> distributorSignUp(String distributorName, String area,
-      String GSTNumber, String shop,String contactNumber,String shopAddress , String latitude , String longitude , String referrer , String selfieUrl) async {
+      String GSTNumber, String shop,String contactNumber,String shopAddress , String latitude , String longitude , String referrer , String selfieUrl , String referrerId) async {
     //send http post here.
     const url =
         "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/DistributorNotifications.json";
@@ -85,6 +85,7 @@ class AuthProvider with ChangeNotifier {
           'longitude' : longitude,
           'referrer': referrer == "" ? "not-mentioned" : referrer,
           'selfieUrl': selfieUrl,
+          'referrerId': referrerId,
         }));
   }
 
@@ -124,11 +125,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  String getReferrerIdByName(String referrerName) {
+  String? getReferrerIdByName(String referrerName) {
     try {
       return _referrers.firstWhere((referrer) => referrer.referrerName == referrerName).referrerId;
     } catch (e) {
-      return "not-found";
+      return null;
     }
   }
 

@@ -34,7 +34,7 @@ class _QRScanPageState extends State<QRScanPage> {
             widget.onScan(area, referrer);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Invalid QR format")),
+              SnackBar(content: Text("I read : ${data}")),
             );
             isScanned = false;
           }
