@@ -24,6 +24,7 @@ class AuthProvider with ChangeNotifier {
   String loggedInShopAddress = "";
   String loggedInLatitude = "";
   String loggedInLongitude = "";
+  String loggedInReferrerId = "";
 
   String dbURL = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/";
   String? _deviceToken = "";
@@ -149,6 +150,7 @@ class AuthProvider with ChangeNotifier {
         distributorName: distributorData['name'],
         shop: distributorData['shop'],
         contact: contact,
+        referrerId: distributorData['referrerId'] ?? "not-found",
         attached_price_list: "normal-price-list",
         shopAddress: distributorData['shopAddress'].toString(),
         latitude: distributorData['latitude']?.toString() ?? "not-found",
@@ -180,6 +182,7 @@ class AuthProvider with ChangeNotifier {
     loggedInShopAddress = sharedPreferences.getString("loggedInShopAddress").toString();
     loggedInLatitude = sharedPreferences.getString("latitude").toString();
     loggedInLongitude = sharedPreferences.getString("longitude").toString();
+    loggedInReferrerId = sharedPreferences.getString("referrerId").toString();
     notifyListeners();
   }
 
@@ -196,6 +199,7 @@ class AuthProvider with ChangeNotifier {
     sharedPreferences.setString("distributorKey", distributor.id);
     sharedPreferences.setString("latitude", distributor.latitude);
     sharedPreferences.setString("longitude", distributor.longitude);
+    sharedPreferences.setString("referrerId", distributor.referrerId);
     loggedInDistributor = distributor.distributorName;
     loggedInArea = distributor.area;
     activePriceList = "normal";

@@ -9,6 +9,7 @@ class Distributor {
   String attached_price_list;
   String latitude;
   String longitude;
+  String referrerId;
 
   Distributor(
       {required this.distributorName,
@@ -20,5 +21,6 @@ class Distributor {
       required this.attached_price_list,
       required this.area,
       required this.latitude,
+      required this.referrerId,
       required this.longitude});
 }
