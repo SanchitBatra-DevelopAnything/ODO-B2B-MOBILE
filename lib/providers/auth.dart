@@ -117,7 +117,7 @@ class AuthProvider with ChangeNotifier {
       final List<Referrer> loadedReferrers = [];
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       extractedData.forEach((referrerId, referrerData) {
-        loadedReferrers.add(Referrer(referrerName: referrerData['referrerName'] , referrerId: referrerId));
+        loadedReferrers.add(Referrer(referrerName: referrerData['businessName'] , referrerId: referrerId));
       });
       _referrers = loadedReferrers;
       notifyListeners();
@@ -128,6 +128,7 @@ class AuthProvider with ChangeNotifier {
 
   String? getReferrerIdByName(String referrerName) {
     try {
+      //referrerName means businessName , ODO1
       return _referrers.firstWhere((referrer) => referrer.referrerName == referrerName).referrerId;
     } catch (e) {
       return null;
