@@ -26,16 +26,19 @@ class _QRScanPageState extends State<QRScanPage> {
           final Barcode barcode = barcodes.first;
           final String? data = barcode.rawValue;
 
-          if (data != null && data.contains("Area:") && data.contains("Referrer:")) {
-            final parts = data.split(",");
-            String area = parts[0].split(":")[1].trim();
-            String referrer = parts[1].split(":")[1].trim();
-
-            widget.onScan(area, referrer);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("I read : ${data}")),
+          if (data != null) {
+            final regex = RegExp(
+              r'Area\s*[:=]\s*(.+?)[,;\n]\s*Referrer\s*[:=]\s*(.+)$',
+              caseSensitive: false,
             );
+            final match = regex.firstMatch(data);
+            if (match != null) {
+              widget.onScan(match.group(1)!.trim(), match.group(2)!.trim());
+            }
+          } else {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("I read : ${data}")));
             isScanned = false;
           }
         },
