@@ -25,6 +25,7 @@ class AuthProvider with ChangeNotifier {
   String loggedInLatitude = "";
   String loggedInLongitude = "";
   String loggedInReferrerId = "";
+  String darkStoreIdForOrder = ""; // different strategies to find this , currently we find through referrerId.
 
   String dbURL = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/";
   String? _deviceToken = "";
@@ -117,9 +118,22 @@ class AuthProvider with ChangeNotifier {
       final List<Referrer> loadedReferrers = [];
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       extractedData.forEach((referrerId, referrerData) {
-        loadedReferrers.add(Referrer(referrerName: referrerData['businessName'] , referrerId: referrerId));
+        print(referrerData);
+        loadedReferrers.add(Referrer(referrerName: referrerData['businessName']??"no-business-name-attached" , referrerId: referrerId));
       });
       _referrers = loadedReferrers;
+      notifyListeners();
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> fetchDarkStoreFromReferrerId(String referrerId) async {
+    var url = "https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/ReferralLeaderboard/${referrerId}.json";
+    try {
+      final response = await http.get(Uri.parse(url));
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      darkStoreIdForOrder = extractedData['darkStoreId'] ?? "not-found";
       notifyListeners();
     } catch (error) {
       rethrow;

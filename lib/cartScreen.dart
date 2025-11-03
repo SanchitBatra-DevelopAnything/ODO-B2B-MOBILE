@@ -82,8 +82,14 @@ class _CartScreenState extends State<CartScreen> {
 
       //yahan jinki location nahi hai unki lena enforce kar sakte hain hum..
 
+      //find darkStoreId based on referrerId = Strategy we have chosen today , this might change later.
+      await Provider.of<AuthProvider>(context, listen: false)
+          .fetchDarkStoreFromReferrerId(referrerId);
+
+      String darkStoreIdForOrder = Provider.of<AuthProvider>(context, listen: false).darkStoreIdForOrder;
+
       await Provider.of<CartProvider>(context, listen: false)
-          .PlaceDistributorOrder(area, distributor, time, "normalPriceList", token , shop , GST, contact , shopAddress , latitude , longitude , referrerId);
+          .PlaceDistributorOrder(area, distributor, time, "normalPriceList", token , shop , GST, contact , shopAddress , latitude , longitude , referrerId , darkStoreIdForOrder);
       cartObject.clearCart();
       await cartObject.deleteCartOnDB(distributor, area);
       Navigator.pushNamedAndRemoveUntil(

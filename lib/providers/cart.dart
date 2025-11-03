@@ -273,7 +273,7 @@ class CartProvider with ChangeNotifier {
 
   Future<void> PlaceDistributorOrder(String area, String loggedInDistributor,
       String time, String activePriceList, String deviceToken , String shop , String GST , String contact , String shopAddress , String latitude , String longitude
-      , String referrerId) async {
+      , String referrerId , String darkStoreIdForOrder) async {
     var todaysDate = DateTime.now();
     var year = todaysDate.year.toString();
     var month = todaysDate.month.toString();
@@ -299,6 +299,8 @@ class CartProvider with ChangeNotifier {
             "delivery-latitude" : latitude,
             "delivery-longitude" : longitude,
             'referrerId' : referrerId,
+            'darkStoreId' : darkStoreIdForOrder,
+            'status' : 'PENDING',
           }));
     } catch (error) {
       print("ERROR IS");
