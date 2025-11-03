@@ -300,7 +300,7 @@ class CartProvider with ChangeNotifier {
             "delivery-longitude" : longitude,
             'referrerId' : referrerId,
             'darkStoreId' : darkStoreIdForOrder,
-            'status' : 'PENDING',
+            'status' : 'pending',
           }));
     } catch (error) {
       print("ERROR IS");
