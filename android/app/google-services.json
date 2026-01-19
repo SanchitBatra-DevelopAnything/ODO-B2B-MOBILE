@@ -24,6 +24,63 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687289513529:android:ab0b92ceadeac6f8f8bfe8",
+        "android_client_info": {
+          "package_name": "com.production.ODODeliveryPartner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUp1deGjBJ4cnXzjU7BPbFs40bEXJv5SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687289513529:android:abb3ffbbc747b420f8bfe8",
+        "android_client_info": {
+          "package_name": "com.production.ODOSalesExecutive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUp1deGjBJ4cnXzjU7BPbFs40bEXJv5SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687289513529:android:f56eaf813d845795f8bfe8",
+        "android_client_info": {
+          "package_name": "com.production.OneDayOrder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUp1deGjBJ4cnXzjU7BPbFs40bEXJv5SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

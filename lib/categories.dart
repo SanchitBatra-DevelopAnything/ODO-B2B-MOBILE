@@ -151,7 +151,7 @@ void _handleInitializationError(Object error) {
 
   void _checkForAppUpdate() async {
   final newVersion = NewVersionPlus(
-    androidId: 'com.production.ODO',
+    androidId: 'com.production.OneDayOrder',
   );
 
   try {
@@ -217,7 +217,7 @@ void showErrorDialog(String error) {
             foregroundColor: Colors.white,
           ),
           onPressed: () {
-            StoreRedirect.redirect(androidAppId: 'com.production.ODO');
+            StoreRedirect.redirect(androidAppId: 'com.production.OneDayOrder');
             Navigator.pop(context);
           },
           child: const Text('Update'),
@@ -401,7 +401,7 @@ void showErrorDialog(String error) {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "ODO BRANDS",
+                        "BRANDS",
                         style: TextStyle(
                           color: Colors.white,
                           shadows: [

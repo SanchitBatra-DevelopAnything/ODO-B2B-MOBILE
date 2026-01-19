@@ -13,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.production.ODO"
+    namespace = "com.production.OneDayOrder"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -28,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.production.ODO"
+        applicationId = "com.production.OneDayOrder"
         minSdk = 23
         targetSdk = 35
         versionCode = flutter.versionCode
